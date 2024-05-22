@@ -2,7 +2,7 @@ import random
 import os 
 
 import pygame
-from pygame.constants import QUIT, K_DOWN, K_UP, K_LEFT, K_RIGHT
+from pygame.constants import QUIT, K_DOWN, K_UP, K_LEFT, K_RIGHT, K_ESCAPE
 
 pygame.init()
 
@@ -52,6 +52,9 @@ CREATE_ENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(CREATE_ENEMY, 1500)
     
 enemies = []
+bonuses =[]
+score = 0
+image_index = 0
 
 
 def create_bonus():
@@ -62,17 +65,30 @@ def create_bonus():
     bonus_move = [0, random.randint(4, 8)]
     return [bonus, bonus_rect, bonus_move]
 
+def endScreen():
+    global score
+
+    run = True
+    while run:
+        pygame.time.delay(100)
+        keys = pygame.key.get_pressed()
+
+        if keys[K_ESCAPE]:
+            run = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False                
+        main_display.blit(bg, (0,0))
+        largeFont = pygame.font.SysFont('comicsans', 80)
+        currentScore = largeFont.render('Score: '+ str(score),1,(255,255,255))
+        main_display.blit(currentScore, (WIDTH/2 - currentScore.get_width()/2, 240))
+        pygame.display.update()
+
 CREATE_BONUS = pygame.USEREVENT + 2
 pygame.time.set_timer(CREATE_BONUS, 2500)
 
-bonuses =[]
-
 CREATE_IMAGE = pygame.USEREVENT +3 
 pygame.time.set_timer(CREATE_IMAGE, 200)
-
-score = 0
-
-image_index = 0
 
 playing = True 
 
@@ -108,6 +124,8 @@ while playing:
 
     keys = pygame.key.get_pressed()
 
+    if keys[K_ESCAPE]:
+        playing = False
     if keys[K_DOWN] and player_rect.bottom < HEIGHT:
         player_rect = player_rect.move(player_move_down)
 
@@ -126,6 +144,8 @@ while playing:
 
         if player_rect.colliderect(enemy[1]):
             playing = False
+            endScreen()
+            break
 
     for bonus in bonuses:
         bonus[1] = bonus[1].move(bonus[2])
