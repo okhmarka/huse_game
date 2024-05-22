@@ -75,9 +75,11 @@ def endScreen():
 
         if keys[K_ESCAPE]:
             run = False
+            break
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False                
+                break
         main_display.blit(bg, (0,0))
         largeFont = pygame.font.SysFont('comicsans', 80)
         currentScore = largeFont.render('Score: '+ str(score),1,(255,255,255))
@@ -173,3 +175,5 @@ while playing:
     for bonus in bonuses: 
         if bonus[1].top > HEIGHT:
             bonuses.pop(bonuses.index(bonus))          
+pygame.display.quit()
+pygame.quit()
